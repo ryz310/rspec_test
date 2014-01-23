@@ -23,4 +23,29 @@ describe Customer do
       expect(customer.errors[column_name]).to be_present
     end
   end
+
+  %w{family_name given_name}.each do |column_name|
+    specify "#{column_name} is able to include Kanji, Hiragana and Katakana" do
+      customer[column_name] = '亜あア'
+      expect(customer).to be_valid
+    end
+
+    specify "#{column_name} should be included Kanji, Hiragana and Katakana only" do
+      ['a', '1', '@'].each do |value|
+        customer[column_name] = value
+        expect(customer).not_to be_valid
+        expect(customer.errors[column_name]).to be_present
+      end
+    end
+  end
+
+  %w{family_name_kana given_name_kana}.each do |column_name|
+    specify "#{column_name} should be included Katakana only" do
+      ['亜', 'あ', 'a', '1', '@'].each do |value|
+        customer[column_name] = value
+        expect(customer).not_to be_valid
+        expect(customer.errors[column_name]).to be_present
+      end
+    end
+  end
 end
