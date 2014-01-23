@@ -22,11 +22,17 @@ describe Customer do
       expect(customer).not_to be_valid
       expect(customer.errors[column_name]).to be_present
     end
+
+    specify "#{column_name} should be translated to Fullwidth Katakana when included Halfwidth Katakana" do
+      customer[column_name] = 'ｱｲｳｴｵ'
+      expect(customer).to be_valid
+      expect(customer[column_name]).to eq('アイウエオ')
+    end
   end
 
   %w{family_name given_name}.each do |column_name|
     specify "#{column_name} is able to include Kanji, Hiragana and Katakana" do
-      customer[column_name] = '亜あア'
+      customer[column_name] = '亜あアー'
       expect(customer).to be_valid
     end
 
@@ -41,7 +47,7 @@ describe Customer do
 
   %w{family_name_kana given_name_kana}.each do |column_name|
     specify "#{column_name} should be included Katakana only" do
-      ['亜', 'A', 'a', '1', '@'].each do |value|
+      ['亜', 'A', '1', '@'].each do |value|
         customer[column_name] = value
         expect(customer).not_to be_valid
         expect(customer.errors[column_name]).to be_present
