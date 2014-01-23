@@ -41,11 +41,17 @@ describe Customer do
 
   %w{family_name_kana given_name_kana}.each do |column_name|
     specify "#{column_name} should be included Katakana only" do
-      ['亜', 'あ', 'a', '1', '@'].each do |value|
+      ['亜', 'A', 'a', '1', '@'].each do |value|
         customer[column_name] = value
         expect(customer).not_to be_valid
         expect(customer.errors[column_name]).to be_present
       end
+    end
+
+    specify "#{column_name} should be translated to Katakana when included Hiragana" do
+      customer[column_name] = 'あいうえお'
+      expect(customer).to be_valid
+      expect(customer[column_name]).to eq('アイウエオ')
     end
   end
 end

@@ -1,5 +1,7 @@
 #codeing: utf-8
 
+require 'nkf'
+
 class Customer < ActiveRecord::Base
   validates :family_name, :family_name_kana, :given_name, :given_name_kana, 
     presence: true, 
@@ -8,4 +10,9 @@ class Customer < ActiveRecord::Base
     format:   {with: /\A[\p{Han}\p{Hiragana}\p{Katakana}]+\z/, allow_blank: true}
   validates :family_name_kana, :given_name_kana,
     format:   {with: /\A\p{Katakana}+\z/, allow_blank: true}
+
+  before_validation do
+    self.family_name_kana = NKF.nkf('-wh2', family_name_kana) if family_name_kana
+    self.given_name_kana  = NKF.nkf('-wh2', given_name_kana ) if given_name_kana
+  end
 end
