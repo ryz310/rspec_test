@@ -1,7 +1,7 @@
 # coding: utf-8
 require 'spec_helper'
 
-describe Customer do
+describe Customer, 'Validation' do
   let(:customer) do 
     build(:customer)
   end
@@ -59,5 +59,16 @@ describe Customer do
       expect(customer).to be_valid
       expect(customer[column_name]).to eq('アイウエオ')
     end
+  end
+end
+
+describe Customer, '.authenticate' do
+  let(:customer) do
+    create(:customer, username: 'taro', password: 'correct_password')
+  end
+
+  specify 'ユーザー名とパスワードに該当するオブジェクトを返す' do
+    result = Customer.authenticate(customer.username, 'correct_password')
+    expect(result).to eq(customer)
   end
 end
