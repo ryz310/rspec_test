@@ -4,6 +4,8 @@ require 'nkf'
 require 'bcrypt'
 
 class Customer < ActiveRecord::Base
+  has_many :rewords
+
   attr_accessor :password
 
   validates :family_name, :family_name_kana, :given_name, :given_name_kana, 
@@ -23,6 +25,10 @@ class Customer < ActiveRecord::Base
 
   before_save do
     self.password_digest = BCrypt::Password.create(password) if password.present?
+  end
+
+  def points
+    rewords.sum(:points)
   end
 
   class << self

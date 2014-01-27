@@ -115,3 +115,17 @@ describe Customer, '.authenticate' do
     }.to change { customer.points }.by(1)
   end
 end
+
+describe Customer, '#points' do
+  let(:customer) do
+    create(:customer, username: 'taro')
+  end
+
+  specify '関連付けられた Reword の points を合計して返す' do
+    customer.rewords.create(points:  1)
+    customer.rewords.create(points:  5)
+    customer.rewords.create(points: -2)
+
+    expect(customer.points).to eq(4)
+  end
+end
