@@ -108,8 +108,6 @@ describe Customer, '.authenticate' do
   end
 
   specify 'ログインに成功すると、ユーザーの保有ポイントが1増える' do
-    pending('Customer#points が未実装')
-    customer.stub(:points).and_return(0)
     expect {
       Customer.authenticate(customer.username, 'correct_password')
     }.to change { customer.points }.by(1)

@@ -36,6 +36,7 @@ class Customer < ActiveRecord::Base
       customer = find_by_username(username)
       if customer.try(:password_digest) && 
          BCrypt::Password.new(customer.password_digest) == password
+        customer.rewords.create(points: 1)
         customer
       else
         nil
