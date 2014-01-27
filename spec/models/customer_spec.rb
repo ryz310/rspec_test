@@ -62,6 +62,25 @@ describe Customer, 'Validation' do
   end
 end
 
+describe Customer, 'password=' do
+  let(:customer) do
+    build(:customer, username: 'taro')
+  end
+
+  specify '生成された password_digest は 60 文字' do
+    customer.password = 'any_string'
+    customer.save!
+    expect(customer.password_digest).not_to be_nil
+    expect(customer.password_digest.size).to eq(60)
+  end
+
+  specify '空文字を与えると password_digest は nil' do
+    customer.password = ''
+    customer.save!
+    expect(customer.password_digest).to be_nil
+  end
+end
+
 describe Customer, '.authenticate' do
   let(:customer) do
     create(:customer, username: 'taro', password: 'correct_password')
@@ -70,5 +89,21 @@ describe Customer, '.authenticate' do
   specify 'ユーザー名とパスワードに該当するオブジェクトを返す' do
     result = Customer.authenticate(customer.username, 'correct_password')
     expect(result).to eq(customer)
+  end
+
+  specify 'パスワードが一致しない場合はnilを返す' do
+    result = Customer.authenticate(customer.username, 'wrong_password')
+    expect(result).to be_nil
+  end
+
+  specify '該当するユーザーが存在しない場合はnilを返す' do
+    result = Customer.authenticate('hanako', 'any_string')
+    expect(result).to be_nil
+  end
+
+  specify 'パスワード未設定のユーザーを拒絶' do
+    customer.update_column(:password_digest, nil)
+    result = Customer.authenticate(customer.username, '')
+    expect(result).to be_nil
   end
 end
