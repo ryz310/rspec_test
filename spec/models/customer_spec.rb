@@ -3,7 +3,7 @@ require 'spec_helper'
 
 describe Customer do
   let(:customer) do 
-    FactoryGirl.build(:customer)
+    build(:customer)
   end
 
   specify 'valid object' do
